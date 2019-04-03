@@ -15,8 +15,8 @@ var getExpoTokenArray = function(expoToken) {
 
 var createExpoMessage = function(expoTokensArray, message, messageProb) {
 	var msg = [];
-	if(messageProb) {
-		messageProb = " also there is a probleme with the probs " + messageProb;
+	if(message) {
+		messageProb = messageProb ? " also there is a probleme with the probs " + messageProb : "";
 	}
   for (var i = 0; i < expoTokensArray.length; i += 1) {
     msg.push(
@@ -109,6 +109,16 @@ if (tanksName.length) {
 
     return { msg: msg, metadata: metadata, msgType: msgType };
   }
+} else if (inValidTankName.length) {
+
+	var messageAboutDeviceProblem = inValidTankName.join(' ');
+
+	if(messageAboutDeviceProblem) {
+		msg = createExpoMessage(expoTokenArray, '', messageAboutDeviceProblem);
+	}
+
+	return { msg: msg, metadata: metadata, msgType: msgType };
+
 }
 
 return false;

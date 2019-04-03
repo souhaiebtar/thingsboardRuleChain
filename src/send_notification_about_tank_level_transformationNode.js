@@ -31,7 +31,7 @@ var tanksBarometerArray = JSON.parse(metadata.shared_tanks_barometer);
 
 // get property key of the msg, it should be the same as
 // Object.keys(msg)(case where msg contain only tank property)
-var tanksName = ["tank2", "tank3", "tank4", "tank5"];
+var tanksName = ["tank1", "tank2", "tank3", "tank4", "tank5"];
 
 // get msgIntegerPartArray (array which contain the integer part of every msg property)
 // also get tankIndex ()

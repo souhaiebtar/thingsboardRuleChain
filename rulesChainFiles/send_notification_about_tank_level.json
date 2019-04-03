@@ -1,0 +1,79 @@
+{
+  "ruleChain": {
+    "additionalInfo": null,
+    "name": "send Notification about tank level",
+    "firstRuleNodeId": null,
+    "root": false,
+    "debugMode": false,
+    "configuration": null
+  },
+  "metadata": {
+    "firstNodeIndex": 0,
+    "nodes": [
+      {
+        "additionalInfo": {
+          "layoutX": 247,
+          "layoutY": 19
+        },
+        "type": "org.thingsboard.rule.engine.metadata.TbGetAttributesNode",
+        "name": "get Shared Attribute",
+        "debugMode": false,
+        "configuration": {
+          "clientAttributeNames": [],
+          "sharedAttributeNames": [
+            "notificationToken",
+            "minimumValue",
+            "tanks_barometer",
+            "tanks_array_of_name_type_and"
+          ],
+          "serverAttributeNames": [],
+          "latestTsKeyNames": []
+        }
+      },
+      {
+        "additionalInfo": {
+          "layoutX": 563,
+          "layoutY": 23
+        },
+        "type": "org.thingsboard.rule.engine.transform.TbTransformMsgNode",
+        "name": "IF ONE OF THE TANKS HAS A VALUE INFERIOR TO MINIMUMVALUE IN SHAREDATTRIBUTE, send a valid message",
+        "debugMode": false,
+        "configuration": {
+          "jsScript": "var ExpoNotificationMessage = function(to, title, body) {\n\tthis.to = to;\n\tthis.title = title;\n\tthis.body = body;\n};\n\nvar getExpoTokenArray = function(expoToken) {\n\t// START: parse the attribute that contain the token\n\t// used for the notification\n\tvar expoTokenArray = [];\n\tif(expoToken)\n\t\texpoTokenArray = expoToken.split(\",,\").filter(Boolean);\n\t// END\n\treturn expoTokenArray;\n}\n\nvar createExpoMessage = function(expoTokensArray, message) {\n\tvar msg = [];\n\tfor (var i = 0; i < expoTokensArray.length; i+=1) {\n\t\tmsg.push(new ExpoNotificationMessage(\n\t\t\t\"ExponentPushToken[\" + expoTokensArray[i] + \"]\",\n\t\t\t\"Hello\",\n\t\t\t\"sorry but tanks \"+ message +\" of the tanks contain less than \" + minimumValue + \"%\"\n\t\t))\n\t}\n\treturn msg;\n}\n\n// parse tanksBarometer\nvar tanksBarometerArray = JSON.parse(metadata.shared_tanks_barometer);\n\n// get property key of the msg, it should be the same as\n// Object.keys(msg)(case where msg contain only tank property)\nvar tanksName = [\"tank1\", \"tank2\", \"tank3\", \"tank4\", \"tank5\"];\n\n// get msgIntegerPartArray (array which contain the integer part of every msg property)\n// also get tankIndex ()\nvar msgIntegerPartArray = [];\nvar tankIndex = [];\nfor (var i = 0; i < tanksName.length; i += 1) {\n\tmsgIntegerPartArray.push(~~Number(msg[tanksName[i]]));\n\ttankIndex.push(Number(tanksName[i].substr(-1)) - 1);\n}\n\n// pourcentage for every tank\nvar pourcentagesArray = [];\nfor (var i = 0; i < msgIntegerPartArray.length; i += 1) {\n\tpourcentagesArray.push(\n\t\ttanksBarometerArray[tankIndex[i]][msgIntegerPartArray[i]] /\n\t\t\ttanksBarometerArray[tankIndex[i]][\n\t\t\t\ttanksBarometerArray[tankIndex[i]].length - 1\n\t\t\t]\n\t);\n}\n\n// minimum Pourcentage, gotten from shared attribute\n\nvar expoTokenArray = getExpoTokenArray(metadata.shared_notificationToken);\nvar minimumValue = metadata.shared_minimumValue;\nif (minimumValue && expoTokenArray.length && pourcentagesArray.length ) {\n\n  var pourcentagesArrayLength = pourcentagesArray.length;\n\tvar messageToAppendInNotification = '';\n\n  for(var i = 0; i < pourcentagesArrayLength; i++) {\n\t\tif ( pourcentagesArray[i] < (minimumValue/100) ) {\n\t\t\tmessageToAppendInNotification += (i+1) + ' ';\n\t\t}\n  }\n  \n  var msg = createExpoMessage(expoTokenArray, messageToAppendInNotification);\n\n  return { msg: msg, metadata: metadata, msgType: msgType };\n\n\n\n}\n\nreturn false;"
+        }
+      },
+      {
+        "additionalInfo": {
+          "layoutX": 592,
+          "layoutY": 288
+        },
+        "type": "org.thingsboard.rule.engine.rest.TbRestApiCallNode",
+        "name": "send a message to the expo notification api",
+        "debugMode": false,
+        "configuration": {
+          "restEndpointUrlPattern": "https://exp.host/--/api/v2/push/send",
+          "requestMethod": "POST",
+          "headers": {
+            "host": "exp.host",
+            "accept": "application/json",
+            "accept-encoding": "gzip,deflate",
+            "content-type": "application/json"
+          }
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromIndex": 0,
+        "toIndex": 1,
+        "type": "Success"
+      },
+      {
+        "fromIndex": 1,
+        "toIndex": 2,
+        "type": "Success"
+      }
+    ],
+    "ruleChainConnections": null
+  }
+}

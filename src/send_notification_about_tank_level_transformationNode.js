@@ -31,7 +31,7 @@ var tanksBarometerArray = JSON.parse(metadata.shared_tanks_barometer);
 
 // get property key of the msg, it should be the same as
 // Object.keys(msg)(case where msg contain only tank property)
-var tanksName = ["tank1", "tank2", "tank3", "tank4", "tank5"];
+var tanksName = ["tank2", "tank3", "tank4", "tank5"];
 
 // get msgIntegerPartArray (array which contain the integer part of every msg property)
 // also get tankIndex ()
@@ -60,7 +60,7 @@ var minimumValue = metadata.shared_minimumValue;
 if (minimumValue && expoTokenArray.length && pourcentagesArray.length ) {
 
   var pourcentagesArrayLength = pourcentagesArray.length;
-	var messageToAppendInNotification = '';
+	var messageToAppendInNotification = '', msg = '';
 
   for(var i = 0; i < pourcentagesArrayLength; i++) {
 		if ( pourcentagesArray[i] < (minimumValue/100) ) {
@@ -68,7 +68,8 @@ if (minimumValue && expoTokenArray.length && pourcentagesArray.length ) {
 		}
   }
   
-  var msg = createExpoMessage(expoTokenArray, messageToAppendInNotification);
+  if(messageToAppendInNotification)
+    msg = createExpoMessage(expoTokenArray, messageToAppendInNotification);
 
   return { msg: msg, metadata: metadata, msgType: msgType };
 

@@ -13,22 +13,21 @@ var getExpoTokenArray = function(expoToken) {
   return expoTokenArray;
 };
 
-var createExpoMessage = function(expoTokensArray, message, messageProb) {
-	var msg = [];
+var createExpoMessage = function(expoTokensArray, message, messageProb,minimumValue) {
+  var msg = [];
+
 	if(message) {
-		messageProb = messageProb ? " also there is a probleme with the probs " + messageProb : "";
-	}
+    messageProb = messageProb ? " also there is a problem with the probs " + messageProb : "";
+    message = 'sorry but tanks '+ message+ ' contain less than ' + minimumValue + "% " + messageProb;
+	} else {
+    message = 'sorry but there is a problem with  probs in ' + messageProb;
+  }
   for (var i = 0; i < expoTokensArray.length; i += 1) {
     msg.push(
       new ExpoNotificationMessage(
         "ExponentPushToken[" + expoTokensArray[i] + "]",
         "Hello",
-        "sorry but tanks " +
-          message +
-          " contain less than " +
-          minimumValue +
-					"%" +
-					messageProb
+        message
       )
     );
   }
@@ -51,10 +50,12 @@ var voltageNameLength = voltageName.length;
 var validTankName = [];
 var inValidTankName = [];
 for(var i = 0; i < voltageNameLength; i++) {
-	if(msg[voltageName[i]] && Number(msg[voltageName[i]]) > 0.5)
-		validTankName.push(tanksName[i]);
-	else
-		inValidTankName.push(tanksName[i]);
+	if(msg[voltageName[i]] && Number(msg[voltageName[i]]) > 0.5) {
+    validTankName.push(tanksName[i]);
+  }
+	else {
+    inValidTankName.push(tanksName[i]);
+  }
 
 	//create a new array which contain list of tankname for which voltage > 0.5
 }
@@ -105,7 +106,7 @@ if (tanksName.length) {
 		}
 
     if (messageToAppendInNotification)
-      msg = createExpoMessage(expoTokenArray, messageToAppendInNotification, messageAboutDeviceProblem);
+      msg = createExpoMessage(expoTokenArray, messageToAppendInNotification, messageAboutDeviceProblem, minimumValue);
 
     return { msg: msg, metadata: metadata, msgType: msgType };
   }
@@ -114,7 +115,7 @@ if (tanksName.length) {
 	var messageAboutDeviceProblem = inValidTankName.join(' ');
 
 	if(messageAboutDeviceProblem) {
-		msg = createExpoMessage(expoTokenArray, '', messageAboutDeviceProblem);
+		msg = createExpoMessage(expoTokenArray, '', messageAboutDeviceProblem,'');
 	}
 
 	return { msg: msg, metadata: metadata, msgType: msgType };

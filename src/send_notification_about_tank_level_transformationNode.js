@@ -105,7 +105,7 @@ if (tanksName.length) {
 			messageAboutDeviceProblem = inValidTankName.join(' ');
 		}
 
-    if (messageToAppendInNotification)
+    if (messageToAppendInNotification || messageAboutDeviceProblem)
       msg = createExpoMessage(expoTokenArray, messageToAppendInNotification, messageAboutDeviceProblem, minimumValue);
 
     return { msg: msg, metadata: metadata, msgType: msgType };

@@ -34,7 +34,8 @@ var tanksBarometerArray = JSON.parse(metadata.shared_tanks_barometer);
 var tanksName = ["tank1", "tank2", "tank3", "tank4", "tank5"];
 
 // get msgIntegerPartArray (array which contain the integer part of every msg property)
-// also get tankIndex ()
+// also get tankIndex, [0,1,2,3,4] which gonna be used to get the correct 
+//barometer array from tanksBarometerArray
 var msgIntegerPartArray = [];
 var tankIndex = [];
 for (var i = 0; i < tanksName.length; i += 1) {
@@ -42,7 +43,7 @@ for (var i = 0; i < tanksName.length; i += 1) {
 	tankIndex.push(Number(tanksName[i].substr(-1)) - 1);
 }
 
-// pourcentage for every tank
+// calculate pourcentage for every tank
 var pourcentagesArray = [];
 for (var i = 0; i < msgIntegerPartArray.length; i += 1) {
 	pourcentagesArray.push(

@@ -1,15 +1,15 @@
 var removeTanksThatReceivedNotification = function(tanksNameArray, indexForTanksThatReceivedNotificationString) {
   var indexInvalidArray = indexForTanksThatReceivedNotificationString.split(',').filter(Boolean);
   
-  var tanksOk = [];
+  var tanksDidntReceivedNotificationArray = [];
   var arrayLength = tanksNameArray.length;
   for(var i = 0; i < arrayLength; i+=1){
       if(indexInvalidArray.indexOf(tanksNameArray[i].substr(-1)) == -1) {
-          tanksOk.push(tanksNameArray[i])
+        tanksDidntReceivedNotificationArray.push(tanksNameArray[i])
       }
   }
   
-  return tanksOk;
+  return tanksDidntReceivedNotificationArray;
   
 }
 

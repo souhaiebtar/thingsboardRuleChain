@@ -16,6 +16,7 @@ var getExpoTokenArray = function(expoToken) {
 
 var createExpoMessage = function(expoTokensArray, message, messageProb,minimumValue) {
   var msg = [];
+  var indexForTanksWIthMinimum = message;
 
 	if(message) {
     messageProb = messageProb ? " also there is a problem with the probs " + messageProb : "";
@@ -29,7 +30,7 @@ var createExpoMessage = function(expoTokensArray, message, messageProb,minimumVa
         "ExponentPushToken[" + expoTokensArray[i] + "]",
         "Hello",
         message,
-        {'type': 'minimumOnly', 'devicesId': metadata.deviceId}
+        {'type': indexForTanksWIthMinimum, 'devicesId': metadata.deviceId, 'indexForTanksWIthMinimum': indexForTanksWIthMinimum}
       )
     );
   }
@@ -93,6 +94,8 @@ if (tanksName.length) {
 
   if (minimumValue && expoTokenArray.length && pourcentagesArray.length) {
     var pourcentagesArrayLength = pourcentagesArray.length;
+    // contain a list of tanksIndex that have less than minimumValue
+    // in a form of a string seperated by space (e.g: `1 3 5` mean that tank 1, 3 and 5 have less than minimumValue)
     var messageToAppendInNotification = "",
       msg = "";
 

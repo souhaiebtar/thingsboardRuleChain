@@ -1,7 +1,8 @@
-var ExpoNotificationMessage = function(to, title, body) {
+var ExpoNotificationMessage = function(to, title, body, data) {
   this.to = to;
   this.title = title;
   this.body = body;
+  this.data = JSON.stringify(data);
 };
 
 var getExpoTokenArray = function(expoToken) {
@@ -27,7 +28,8 @@ var createExpoMessage = function(expoTokensArray, message, messageProb,minimumVa
       new ExpoNotificationMessage(
         "ExponentPushToken[" + expoTokensArray[i] + "]",
         "Hello",
-        message
+        message,
+        {'type': 'minimumOnly', 'devicesId': metadata.deviceId}
       )
     );
   }
